@@ -4,14 +4,16 @@ import (
 	"cinema_diary"
 	"cinema_diary/pkg/repository"
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
 
 const (
-	salt     = "1gdfg734tybs"
-	tokenTTL = 12 * time.Hour
+	salt       = "1gdfg734tybs"
+	signingKey = "df2154gs365661sd"
+	tokenTTL   = 12 * time.Hour
 )
 
 type tokenClaims struct {
@@ -51,17 +53,35 @@ func (s *AuthService) GenerateToken(login, password string) (string, error) {
 		return "", err
 	}
 
-	key := []byte("test")
 	claims := &tokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Minute)),
 		},
 		Id: user.Id,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	fmt.Println("TOKEN:", token)
-	fmt.Println(token.SignedString(key))
-	return token.SignedString(key)
+	return token.SignedString([]byte(signingKey))
+}
+
+func (s *AuthService) ParseToken(tokenString string) (int, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		return []byte(signingKey), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return 0, errors.New("token claims are not of type *tokenClaims")
+	}
+
+	return claims.Id, nil
 }
