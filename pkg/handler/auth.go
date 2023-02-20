@@ -26,7 +26,30 @@ func (h *Handler) signUp(c *gin.Context) {
 
 }
 
-func (h *Handler) signIn(c *gin.Context) {
-	fmt.Println("Oh! PRIVET!")
+type signInInput struct {
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
 
+func (h *Handler) signIn(c *gin.Context) {
+	var input signInInput
+
+	if err := c.BindJSON(&input); err != nil {
+		return
+	}
+
+	token, err := h.service.Authorization.GenerateToken(input.Login, input.Password)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
+
+}
+
+func (h *Handler) getUsers(c *gin.Context) {
+	user := h.service.Authorization.GetUsers()
+	fmt.Println(user[0].Name, user[0].Password)
 }

@@ -19,7 +19,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-up", h.signUp)
-		auth.PUT("/sign-in", h.signIn)
+		auth.POST("/sign-in", h.signIn)
+		auth.GET("/users", h.getUsers)
 	}
 
 	return router

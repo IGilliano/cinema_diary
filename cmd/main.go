@@ -14,7 +14,7 @@ func main() {
 		Port:     "5432",
 		Username: "postgres",
 		Password: "456123789",
-		DBName:   "postgres",
+		DBName:   "cd_users",
 		SSLMode:  "disable",
 	})
 	if err != nil {

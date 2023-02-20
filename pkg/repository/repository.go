@@ -7,6 +7,8 @@ import (
 
 type Authorization interface {
 	CreateUser(user cinema_diary.User) (int, error)
+	GetUsers() []*cinema_diary.User
+	GetUser(login, password string) (cinema_diary.User, error)
 }
 
 type Repository struct {
