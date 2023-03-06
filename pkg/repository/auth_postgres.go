@@ -38,7 +38,6 @@ func (ap *AuthPostgres) GetUsers() []*cinema_diary.User {
 		var user cinema_diary.User
 		err = rows.Scan(&user.Id, &user.Name, &user.Login, &user.Password)
 		if err != nil {
-			log.Fatal(err)
 			return nil
 		}
 		users = append(users, &user)

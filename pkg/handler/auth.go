@@ -4,7 +4,6 @@ import (
 	"cinema_diary"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -17,7 +16,7 @@ func (h *Handler) signUp(c *gin.Context) {
 
 	id, err := h.service.Authorization.CreateUser(input)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusBadRequest, err)
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
