@@ -13,7 +13,7 @@ import (
 const (
 	salt       = "1gdfg734tybs"
 	signingKey = "df2154gs365661sd"
-	tokenTTL   = 12 * time.Hour
+	tokenTTL   = 200 * time.Hour
 )
 
 type tokenClaims struct {
@@ -55,7 +55,7 @@ func (s *AuthService) GenerateToken(login, password string) (string, error) {
 
 	claims := &tokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
 		},
 		Id: user.Id,
 	}

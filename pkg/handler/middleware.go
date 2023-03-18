@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"cinema_diary"
+	"errors"
 	_ "errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -34,4 +36,24 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+}
+
+func getUserId(c *gin.Context) (int, error) {
+	id, ok := c.Get(userCtx)
+	if !ok {
+		return 0, errors.New("User not found")
+	}
+
+	idInt, ok := id.(int)
+	if !ok {
+		return 0, errors.New("User id is of invaled type")
+	}
+	return idInt, nil
+}
+
+func isWatched(ml cinema_diary.MoviesList) cinema_diary.MoviesList {
+	if ml.Score != 0 || ml.IsLiked != false {
+		ml.IsWatched = true
+	}
+	return ml
 }

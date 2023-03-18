@@ -8,8 +8,10 @@ import (
 )
 
 func (h *Handler) addToUserList(c *gin.Context) {
-	id, _ := c.Get(userCtx)
-	fmt.Println(id)
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponce(c, http.StatusInternalServerError, err.Error())
+	}
 
 	var moviesList cinema_diary.MoviesList
 
@@ -17,10 +19,30 @@ func (h *Handler) addToUserList(c *gin.Context) {
 		return
 	}
 
-	err := h.service.AddToUserList(moviesList)
+	moviesList.UserId = userId
+
+	err = h.service.AddToUserMoviesList(isWatched(moviesList))
 	if err != nil {
 		newErrorResponce(c, http.StatusBadRequest, err.Error())
 	}
 
 	c.JSON(http.StatusOK, "Film added to your list!")
+}
+
+func (h *Handler) getUserMoviesList(c *gin.Context) {
+	var watched bool
+	if c.FullPath() == "/api/movies-list/" {
+		watched = true
+	}
+	fmt.Println(watched)
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponce(c, http.StatusInternalServerError, err.Error())
+	}
+
+	moviesList, err := h.service.GetUserMoviesList(userId, watched)
+	if err != nil {
+		newErrorResponce(c, http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, moviesList)
 }

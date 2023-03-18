@@ -35,7 +35,38 @@ func (m MovPostgres) GetMovies() ([]*cinema_diary.Movie, error) {
 	return movies, nil
 }
 
-func (m MovPostgres) AddToUserList(moviesList cinema_diary.MoviesList) error {
-	_, err := m.db.Exec("INSERT INTO movies_list(u_id, m_id, is_watched, is_liked, score) VALUES ($1, $2, $3, $4, $5)", moviesList.UserId, moviesList.MovieId, moviesList.IsWatched, moviesList.IsLiked, moviesList.Score)
+func (m MovPostgres) GetMovie(id int) (*cinema_diary.Movie, error) {
+	var movie cinema_diary.Movie
+
+	rows, err := m.db.Query("SELECT * FROM movies WHERE m_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&movie.Id, &movie.Name, &movie.Director, &movie.Year)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &movie, err
+}
+
+func (m MovPostgres) AddMovies(movies []*cinema_diary.Movie) ([]*int, error) {
+	var moviesId []*int
+	for _, movie := range movies {
+		var id int
+		row := m.db.QueryRow("INSERT INTO movies (m_name, director, year) VALUES ($1, $2, $3)", movie.Name, movie.Director, movie.Year)
+		if err := row.Scan(&id); err != nil {
+			continue
+		}
+		moviesId = append(moviesId, &id)
+	}
+	return moviesId, nil
+}
+
+func (m MovPostgres) DeleteMovie(id int) error {
+	_, err := m.db.Exec("DELETE FROM movies WHERE m_id = $1", id)
 	return err
 }

@@ -25,8 +25,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api", h.userIdentity)
 	{
-		api.GET("/movies", h.getMovies)
-		api.POST("/add-to-userlist/", h.addToUserList)
+		movies := api.Group("/movies")
+		{
+			movies.GET("/", h.getMovies)
+			movies.GET("/:id", h.getMovie)
+			movies.POST("/", h.addMovies)
+			movies.DELETE("/:id", h.deleteMovie)
+		}
+		moviesList := api.Group("/movies-list")
+		{
+			moviesList.GET("/", h.getUserMoviesList)
+			moviesList.GET("/watchlist", h.getUserMoviesList)
+			moviesList.POST("/", h.addToUserList)
+		}
 	}
 
 	return router
