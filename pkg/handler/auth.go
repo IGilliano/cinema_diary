@@ -17,6 +17,7 @@ func (h *Handler) signUp(c *gin.Context) {
 	id, err := h.service.Authorization.CreateUser(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{

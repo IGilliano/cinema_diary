@@ -27,6 +27,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
 		newErrorResponce(c, http.StatusUnauthorized, "invalid auth header")
+		return
 	}
 
 	userId, err := h.service.Authorization.ParseToken(headerParts[1])
@@ -51,9 +52,9 @@ func getUserId(c *gin.Context) (int, error) {
 	return idInt, nil
 }
 
-func isWatched(ml cinema_diary.MoviesList) cinema_diary.MoviesList {
+func isWatched(ml cinema_diary.MoviesList) *cinema_diary.MoviesList {
 	if ml.Score != 0 || ml.IsLiked != false {
 		ml.IsWatched = true
 	}
-	return ml
+	return &ml
 }

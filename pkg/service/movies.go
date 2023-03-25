@@ -25,6 +25,14 @@ func (s MovService) GetMovie(id int) (*cinema_diary.Movie, error) {
 	return s.rep.GetMovie(id)
 }
 
+func (s MovService) UpdateMovie(movie *cinema_diary.Movie) error {
+	_, err := s.rep.GetMovie(movie.Id)
+	if err != nil {
+		return err
+	}
+	return s.rep.UpdateMovie(movie)
+}
+
 func (s MovService) DeleteMovie(id int) error {
 	return s.rep.DeleteMovie(id)
 }

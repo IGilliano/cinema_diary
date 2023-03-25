@@ -30,13 +30,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			movies.GET("/", h.getMovies)
 			movies.GET("/:id", h.getMovie)
 			movies.POST("/", h.addMovies)
+			movies.PUT("/", h.updateMovie)
 			movies.DELETE("/:id", h.deleteMovie)
 		}
 		moviesList := api.Group("/movies-list")
 		{
 			moviesList.GET("/", h.getUserMoviesList)
 			moviesList.GET("/watchlist", h.getUserMoviesList)
-			moviesList.POST("/", h.addToUserList)
+			moviesList.GET("/:id", h.getFromUserMoviesList)
+			moviesList.POST("/", h.addToMoviesList)
+			moviesList.PUT("/", h.updateMoviesList)
+			moviesList.DELETE("/:id", h.deleteFromMoviesList)
 		}
 	}
 

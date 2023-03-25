@@ -16,14 +16,16 @@ type Movies interface {
 	GetMovies() ([]*cinema_diary.Movie, error)
 	GetMovie(id int) (*cinema_diary.Movie, error)
 	AddMovies(movies []*cinema_diary.Movie) ([]*int, error)
+	UpdateMovie(movie *cinema_diary.Movie) error
 	DeleteMovie(id int) error
 }
 
 type MoviesList interface {
-	AddToUserMoviesList(moviesList cinema_diary.MoviesList) error
+	AddToUserMoviesList(moviesList *cinema_diary.MoviesList) error
 	GetUserMoviesList(userId int, watched bool) ([]*cinema_diary.MoviesList, error)
-	/*UpdateMoviesList([]*cinema_diary.MoviesList) error
-	 */
+	GetFromUserMoviesList(userId int, movieId int) (*cinema_diary.MoviesList, error)
+	UpdateMoviesList(moviesList *cinema_diary.MoviesList) error
+	DeleteFromMovieList(userId int, movieId int) error
 }
 
 type Service struct {
