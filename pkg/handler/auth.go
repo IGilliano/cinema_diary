@@ -7,16 +7,22 @@ import (
 	"net/http"
 )
 
+type signInInput struct {
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 func (h *Handler) signUp(c *gin.Context) {
 	var input cinema_diary.User
 
 	if err := c.BindJSON(&input); err != nil {
+		newErrorResponce(c, http.StatusBadRequest, "Invalid input body")
 		return
 	}
 
 	id, err := h.service.Authorization.CreateUser(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -24,11 +30,6 @@ func (h *Handler) signUp(c *gin.Context) {
 		`id`: id,
 	})
 
-}
-
-type signInInput struct {
-	Login    string `json:"login" binding:"required"`
-	Password string `json:"password" binding:"required"`
 }
 
 func (h *Handler) signIn(c *gin.Context) {
@@ -50,6 +51,9 @@ func (h *Handler) signIn(c *gin.Context) {
 }
 
 func (h *Handler) getUsers(c *gin.Context) {
-	user := h.service.Authorization.GetUsers()
-	fmt.Println(user[0].Name, user[0].Password)
+	user, err := h.service.Authorization.GetUsers()
+	if err != nil {
+		newErrorResponce(c, http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, user)
 }

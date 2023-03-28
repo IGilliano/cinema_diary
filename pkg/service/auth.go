@@ -42,7 +42,7 @@ func generatePasswordHash(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
-func (s *AuthService) GetUsers() []*cinema_diary.User {
+func (s *AuthService) GetUsers() ([]*cinema_diary.User, error) {
 	return s.rep.GetUsers()
 }
 
