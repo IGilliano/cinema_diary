@@ -7,7 +7,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user cinema_diary.User) (int, error)
-	GetUsers() []*cinema_diary.User
+	GetUsers() ([]*cinema_diary.User, error)
 	GenerateToken(login, password string) (string, error)
 	ParseToken(token string) (int, error)
 }
